@@ -2,6 +2,7 @@
 using MagicVilla_API.Models;
 using MagicVilla_API.Models.DTO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagicVilla_API.Controllers
@@ -11,9 +12,26 @@ namespace MagicVilla_API.Controllers
     public class VillaController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<VillaDTO> GetVilla() //No entendí porque llama como tipo al VillaDTO y no VillaStore
+        public ActionResult<IEnumerable<VillaDTO>> GetVillas()
         {
-            return VillaStore.VillaList;
+
+            return Ok(VillaStore.VillaList);
+        }
+
+        [HttpGet("onekind")]
+        public ActionResult<VillaDTO> GetVilla(int id) 
+        {
+            if(id == 0)
+            {
+                return BadRequest();
+            }
+            var result = VillaStore.VillaList.FirstOrDefault(v => v.ID == id);
+
+            if(result == null)
+            {
+                return NotFound();
+            }
+            return result;
         }
     }
 }
